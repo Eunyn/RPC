@@ -1,5 +1,6 @@
 package com.rpc.provider.server;
 
+import com.rpc.provider.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,6 +13,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,6 +26,9 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class NettyRpcServer implements DisposableBean {
+
+    @Autowired
+    private NettyServerHandler nettyServerHandler;
 
     private EventLoopGroup bossGroup = null;
     private EventLoopGroup workerGroup = null;
@@ -48,9 +53,9 @@ public class NettyRpcServer implements DisposableBean {
                             // 添加 String 的编解码器
                             socketChannel.pipeline().addLast(new StringDecoder());
                             socketChannel.pipeline().addLast(new StringEncoder());
+
                             // 添加自定义处理器
-                            // TODO
-                            // socketChannel.pipeline().addLast(null);
+                             socketChannel.pipeline().addLast(nettyServerHandler);
                         }
                     });
 

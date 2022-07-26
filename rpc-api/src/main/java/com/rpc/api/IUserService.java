@@ -6,7 +6,7 @@ import com.rpc.pojo.User;
  * @Author: Eun
  * @Version 1.0.0
  * @ClassName: IUserService.java
- * @Description: TODO
+ * @Description: 服务接口
  * @CreateTime: 2022/7/24 17:32:00
  **/
 public interface IUserService {
@@ -17,5 +17,5 @@ public interface IUserService {
      * @param id
      * @return
      */
-    User getById(Integer id);
+    User getById(int id);
 }

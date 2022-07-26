@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Author: Eun
  * @Version 1.0.0
  * @ClassName: ClientApplication.java
- * @Description: TODO
+ * @Description: mainClient
  * @CreateTime: 2022/7/24 17:51:00
  **/
 @SpringBootApplication

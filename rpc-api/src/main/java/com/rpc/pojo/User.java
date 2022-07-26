@@ -4,7 +4,7 @@ package com.rpc.pojo;
  * @Author: Eun
  * @Version 1.0.0
  * @ClassName: User.java
- * @Description: TODO
+ * @Description: 实体类
  * @CreateTime: 2022/7/24 17:35:00
  **/
 public class User {

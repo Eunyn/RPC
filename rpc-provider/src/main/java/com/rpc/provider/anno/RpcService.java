@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @Description: 用于暴露服务接口
  * @CreateTime: 2022/7/25 14:44:00
  **/
-@Target(ElementType.TYPE)   // 用户类上
+@Target(ElementType.TYPE)   // 用于类上
 @Retention(RetentionPolicy.RUNTIME) // 在运行时获取到
 public @interface RpcService {
 }
