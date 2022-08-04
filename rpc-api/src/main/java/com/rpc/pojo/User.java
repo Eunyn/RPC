@@ -1,5 +1,7 @@
 package com.rpc.pojo;
 
+import java.io.Serializable;
+
 /**
  * @Author: Eun
  * @Version 1.0.0
@@ -7,7 +9,7 @@ package com.rpc.pojo;
  * @Description: 实体类
  * @CreateTime: 2022/7/24 17:35:00
  **/
-public class User {
+public class User implements Serializable {
     private Integer id;
 
     private String name;
@@ -37,5 +39,13 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

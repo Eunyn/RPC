@@ -1,10 +1,12 @@
-package com.rpc.consumer.processor;
+package com.rpc.consumer.spring;
 
-import com.rpc.consumer.anno.RpcReference;
+import com.rpc.annotation.RpcReference;
 import com.rpc.consumer.proxy.RpcClientProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -12,18 +14,39 @@ import java.lang.reflect.Field;
 /**
  * @Author: Eun
  * @Version 1.0.0
- * @ClassName: MyBeanPostProcessor.java
+ * @ClassName: SpringBeanPostProcessor.java
  * @Description: bean 的后置增强
- * @CreateTime: 2022/7/25 17:39:00
+ * @CreateTime: 2022/7/28 15:07:00
  **/
 @Component
 public class MyBeanPostProcessor implements BeanPostProcessor {
 
-    @Autowired
-    RpcClientProxy rpcClientProxy;
+    Logger logger = LoggerFactory.getLogger(MyBeanPostProcessor.class);
+
+    private final RpcClientProxy rpcClientProxy;
+
+    @Lazy
+    public MyBeanPostProcessor(RpcClientProxy rpcClientProxy) {
+        this.rpcClientProxy = rpcClientProxy;
+    }
+
+//    @Override
+//    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+//        if (bean.getClass().isAnnotationPresent(RpcService.class)) {
+////            RpcService rpcService = bean.getClass().getAnnotation(RpcService.class);
+//            Class<?>[] declaredClasses = bean.getClass().getDeclaredClasses();
+//            for (Class<?> aClass : declaredClasses) {
+//                RpcService rpcService = aClass.getAnnotation(RpcService.class);
+//                if (rpcService != null) {
+//                    Object proxy = rpcClientProxy.getProxy(rpcService.getClass());
+//
+//                }
+//            }
+//        }
+//    }
 
     /**
-     * 自定义注解的注入
+     * 自定义 RpcReference 注解的注入
      *
      * @param bean
      * @param beanName

@@ -1,7 +1,7 @@
 package com.rpc.consumer.controller;
 
+import com.rpc.annotation.RpcReference;
 import com.rpc.api.IUserService;
-import com.rpc.consumer.anno.RpcReference;
 import com.rpc.pojo.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

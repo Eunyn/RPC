@@ -12,6 +12,7 @@
         <module>rpc-api</module>
         <module>rpc-consumer</module>
         <module>rpc-provider</module>
+        <module>rpc-simple</module>
     </modules>
 
     <properties>

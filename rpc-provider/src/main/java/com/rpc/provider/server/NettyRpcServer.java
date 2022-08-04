@@ -8,8 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -51,8 +51,8 @@ public class NettyRpcServer implements DisposableBean {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             // 添加 String 的编解码器
-                            socketChannel.pipeline().addLast(new StringDecoder());
-                            socketChannel.pipeline().addLast(new StringEncoder());
+                            socketChannel.pipeline().addLast(new ByteArrayDecoder());
+                            socketChannel.pipeline().addLast(new ByteArrayEncoder());
 
                             // 添加自定义处理器
                              socketChannel.pipeline().addLast(nettyServerHandler);

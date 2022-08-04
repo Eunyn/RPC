@@ -1,0 +1,36 @@
+package com.rpc.utils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * @Author: Eun
+ * @Version 1.0.0
+ * @ClassName: SingletonFactory.java
+ * @Description: 获取单例对象工厂类
+ * @CreateTime: 2022/8/2 16:56:00
+ **/
+public class SingletonFactory {
+    private static final Map<String, Object> OBJECT_MAP = new ConcurrentHashMap<>();
+
+    private SingletonFactory(){}
+
+    public static <T> T getInstance(Class<T> c) {
+        if (c == null)
+            throw new IllegalArgumentException();
+
+        String key = c.toString();
+        if (OBJECT_MAP.containsKey(key))
+            return c.cast(OBJECT_MAP.get(key));
+        else {
+            return c.cast(OBJECT_MAP.computeIfAbsent(key, k ->{
+                try {
+                    return c.getDeclaredConstructor().newInstance();
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }));
+        }
+    }
+}

@@ -1,9 +1,11 @@
 package com.rpc.provider.handler;
 
-import com.alibaba.fastjson.JSON;
-import com.rpc.common.RpcRequest;
-import com.rpc.common.RpcResponse;
-import com.rpc.provider.anno.RpcService;
+import com.rpc.annotation.RpcService;
+import com.rpc.remoting.dto.RpcRequest;
+import com.rpc.remoting.dto.RpcResponse;
+import com.rpc.serialize.Serializer;
+import com.rpc.serialize.hessian.HessianSerializer;
+import com.rpc.utils.RedisUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -17,10 +19,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @Author: Eun
@@ -36,7 +37,7 @@ import java.util.Set;
  **/
 @Component
 @ChannelHandler.Sharable    // 设置通道共享
-public class NettyServerHandler extends SimpleChannelInboundHandler<String> implements ApplicationContextAware {
+public class NettyServerHandler extends SimpleChannelInboundHandler<byte[]> implements ApplicationContextAware {
 
     private final static Map<String, Object> SERVICE_INSTANCE_MAP = new HashMap<>();
     private final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
@@ -59,6 +60,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> impl
 
             // 默认处理第一个作为缓存 bean 的名字
             String serviceName = serviceBean.getClass().getInterfaces()[0].getName();
+
+            // 注册服务
+            final String serviceNameImpl = serviceBean.getClass().getName();
+            // 服务, 实现类
+            RedisUtil.serviceRegistry(serviceName, serviceNameImpl);
+
             SERVICE_INSTANCE_MAP.put(serviceName, serviceBean);
             logger.info("{}", SERVICE_INSTANCE_MAP);
         }
@@ -71,14 +78,16 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> impl
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String s) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, byte[] s) throws Exception {
+        // Hessian 反序列化客户端请求
+        Serializer serializer = new HessianSerializer();
+        RpcRequest rpcRequest = serializer.deserializer(s, RpcRequest.class);
+
         // 2. 接收客户端请求
-        RpcRequest rpcRequest = JSON.parseObject(s, RpcRequest.class);
+        // RpcRequest rpcRequest = JSON.parseObject(s, RpcRequest.class);
         RpcResponse rpcResponse = new RpcResponse();
         rpcResponse.setRequestId(rpcRequest.getRequestId());
 
-        logger.debug("客户端请求 --> 类名: {}", rpcRequest.getClassName());
-        logger.debug("客户端请求 --> 参数: {}", rpcRequest.getParameters());
 
         // 业务处理
         try {
@@ -88,22 +97,41 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<String> impl
             rpcResponse.setError(e.getMessage());
         }
 
+        // Hessian 序列化服务端响应
+        byte[] bytes = serializer.serializer(rpcResponse);
 
         // 5. 给客户端响应
-        ctx.writeAndFlush(JSON.toJSONString(rpcResponse));
+        // ctx.writeAndFlush(JSON.toJSONString(rpcResponse));
+
+        ctx.writeAndFlush(bytes);
     }
 
-    private Object handler(RpcRequest rpcRequest) throws InvocationTargetException {
+    private Object handler(RpcRequest rpcRequest) throws InvocationTargetException, IllegalAccessException {
         // 3. 根据传递过来的 beanName 从缓存中查找
         Object serviceBean = SERVICE_INSTANCE_MAP.get(rpcRequest.getClassName());
-        if (serviceBean == null) {
-            throw new RuntimeException("服务端没有找到服务");
-        }
+        // 根据传递过来的 beanName 从注册中心中查找
+//        String serviceImpl = RedisUtil.serviceDiscovery(rpcRequest.getClassName());
+//        if (serviceBean == null) {
+//            throw new RuntimeException("服务端没有找到服务");
+//        }
 
         // 4. 通过反射调用 bean 方法
-        FastClass proxyClass = FastClass.create(serviceBean.getClass());
-        FastMethod method = proxyClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+         FastClass proxyClass = FastClass.create(serviceBean.getClass());
+         FastMethod method = proxyClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
 
+//        Method method = null;
+//        Class<?> aClass = null;
+//        Object target = null;
+//        try {
+//            aClass = Class.forName(serviceBean);
+//            target = aClass.newInstance();
+//            method = aClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+//        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException e) {
+//            e.printStackTrace();
+//        }
+
+        assert method != null;
         return method.invoke(serviceBean, rpcRequest.getParameters());
+//        return method.invoke(target, rpcRequest.getParameters());
     }
 }

@@ -1,4 +1,6 @@
-package com.rpc.common;
+package com.rpc.remoting.dto;
+
+import java.io.Serializable;
 
 /**
  * @Author: Eun
@@ -7,7 +9,7 @@ package com.rpc.common;
  * @Description: 封装的响应对象
  * @CreateTime: 2022/7/24 17:37:00
  **/
-public class RpcResponse {
+public class RpcResponse implements Serializable {
 
     /**
      * 请求的对象 ID

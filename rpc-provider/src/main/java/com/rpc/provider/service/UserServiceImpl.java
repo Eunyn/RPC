@@ -1,8 +1,8 @@
 package com.rpc.provider.service;
 
+import com.rpc.annotation.RpcService;
 import com.rpc.api.IUserService;
 import com.rpc.pojo.User;
-import com.rpc.provider.anno.RpcService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,6 +29,8 @@ public class UserServiceImpl implements IUserService {
             userMap.put(user1.getId(), user1);
             userMap.put(user2.getId(), user2);
         }
+        if (userMap.get(id) == null)
+            return new User(-1, "error");
 
         return userMap.get(id);
     }

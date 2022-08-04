@@ -1,0 +1,1 @@
+redis=com.rpc.registry.redis.RedisServiceRegistryImpl

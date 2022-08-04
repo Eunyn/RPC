@@ -8,8 +8,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ import java.util.concurrent.Future;
  **/
 @Component
 public class NettyRpcClient implements InitializingBean, DisposableBean {
+
+    Logger logger = LoggerFactory.getLogger(NettyRpcClient.class);
 
     private EventLoopGroup group = null;
     private Channel channel = null;
@@ -61,8 +65,8 @@ public class NettyRpcClient implements InitializingBean, DisposableBean {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             // 添加编解码器
-                            socketChannel.pipeline().addLast(new StringDecoder());
-                            socketChannel.pipeline().addLast(new StringEncoder());
+                            socketChannel.pipeline().addLast(new ByteArrayDecoder());
+                            socketChannel.pipeline().addLast(new ByteArrayEncoder());
 
                             // 添加自定义处理类
                             socketChannel.pipeline().addLast(nettyRpcClientHandler);
@@ -71,6 +75,7 @@ public class NettyRpcClient implements InitializingBean, DisposableBean {
 
             // 1.4 连接服务
             channel = bootstrap.connect("localhost", 8899).sync().channel();
+            logger.debug("==============客户端已连接==============");
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -96,12 +101,14 @@ public class NettyRpcClient implements InitializingBean, DisposableBean {
     /**
      * 消息发送
      *
-     * @param msg
-     * @return
+     * @param msg 客户端请求
+     * @return  服务端响应
      */
-    public Object send(String msg) throws ExecutionException, InterruptedException {
+    public byte[] send(byte[] msg) throws ExecutionException, InterruptedException {
         nettyRpcClientHandler.setRequestMsg(msg);
+        logger.debug("执行 nettyRpcClientHandler");
         Future submit = service.submit(nettyRpcClientHandler);
-        return submit.get();
+        logger.debug("返回 服务端响应结果");
+        return (byte[]) submit.get();
     }
 }

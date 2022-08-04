@@ -14,13 +14,13 @@ import java.util.concurrent.Callable;
  * @CreateTime: 2022/7/25 16:50:00
  **/
 @Component
-public class NettyRpcClientHandler extends SimpleChannelInboundHandler<String> implements Callable {
+public class NettyRpcClientHandler extends SimpleChannelInboundHandler<byte[]> implements Callable {
 
     private ChannelHandlerContext context;
-    private String requestMsg;  // 发送消息
-    private String responseMsg; // 接收消息
+    private byte[] requestMsg;  // 发送消息
+    private byte[] responseMsg; // 接收消息
 
-    public void setRequestMsg(String requestMsg) {
+    public void setRequestMsg(byte[] requestMsg) {
         this.requestMsg = requestMsg;
     }
 
@@ -31,7 +31,7 @@ public class NettyRpcClientHandler extends SimpleChannelInboundHandler<String> i
      * @throws Exception
      */
     @Override
-    protected synchronized void channelRead0(ChannelHandlerContext channelHandlerContext, String msg) throws Exception {
+    protected synchronized void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] msg) throws Exception {
         responseMsg = msg;
         // 唤醒等待线程
         notify();
