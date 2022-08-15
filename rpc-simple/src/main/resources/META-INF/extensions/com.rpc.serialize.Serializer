@@ -1,0 +1,1 @@
+serializer=com.rpc.serialize.hessian.HessianSerializer

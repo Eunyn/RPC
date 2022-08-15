@@ -1,5 +1,6 @@
 package com.rpc.spring;
 
+import com.rpc.annotation.RpcReference;
 import com.rpc.annotation.RpcService;
 import com.rpc.config.RpcServiceConfig;
 import com.rpc.extension.ExtensionLoader;
@@ -8,13 +9,13 @@ import com.rpc.provider.impl.RedisServiceProviderImpl;
 import com.rpc.proxy.RpcClientProxy;
 import com.rpc.remoting.transport.RpcRequestTransport;
 import com.rpc.utils.SingletonFactory;
-import jdk.nashorn.internal.ir.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
@@ -34,7 +35,7 @@ public class SpringBeanPostProcessor implements BeanPostProcessor {
 
     public SpringBeanPostProcessor() {
         this.serviceProvider = SingletonFactory.getInstance(RedisServiceProviderImpl.class);
-        this.rpcClient = ExtensionLoader.getExtensionLoader(RpcRequestTransport.class).getExtension("socket");
+        this.rpcClient = ExtensionLoader.getExtensionLoader(RpcRequestTransport.class).getExtension("netty");
     }
 
     @Override
@@ -57,7 +58,7 @@ public class SpringBeanPostProcessor implements BeanPostProcessor {
         Class<?> targetClass = bean.getClass();
         Field[] declaredFields = targetClass.getDeclaredFields();
         for (Field field : declaredFields) {
-            Reference rpcReference = field.getAnnotation(Reference.class);
+            RpcReference rpcReference = field.getAnnotation(RpcReference.class);
             if (rpcReference != null) {
                 RpcServiceConfig rpcServiceConfig = new RpcServiceConfig();
 

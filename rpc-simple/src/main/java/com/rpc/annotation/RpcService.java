@@ -1,9 +1,6 @@
 package com.rpc.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @Author: Eun
@@ -14,5 +11,6 @@ import java.lang.annotation.Target;
  **/
 @Target(ElementType.TYPE)   // 用于类上
 @Retention(RetentionPolicy.RUNTIME) // 在运行时获取到
+@Inherited
 public @interface RpcService {
 }

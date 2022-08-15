@@ -1,5 +1,7 @@
 package com.rpc.serialize;
 
+import com.rpc.annotation.SPI;
+
 /**
  * @Author: Eun
  * @Version 1.0.0
@@ -7,6 +9,7 @@ package com.rpc.serialize;
  * @Description: 序列化接口
  * @CreateTime: 2022/7/27 14:14:00
  **/
+@SPI
 public interface Serializer {
 
     /**

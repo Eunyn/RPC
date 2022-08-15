@@ -16,13 +16,12 @@ import java.util.Map;
  * @CreateTime: 2022/7/24 17:46:00
  **/
 @RpcService
-@Service
 public class UserServiceImpl implements IUserService {
 
     private final Map<Object, User> userMap = new HashMap<>();
 
     @Override
-    public User getById(int id) {
+    public User getById(Integer id) {
         if (userMap.size() == 0) {
             User user1 = new User(1, "张三");
             User user2 = new User(2, "李四");
@@ -31,6 +30,8 @@ public class UserServiceImpl implements IUserService {
         }
         if (userMap.get(id) == null)
             return new User(-1, "error");
+
+        System.out.println("===============test================");
 
         return userMap.get(id);
     }

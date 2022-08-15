@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description: mainClient
  * @CreateTime: 2022/7/24 17:51:00
  **/
-@SpringBootApplication
+//@SpringBootApplication
 public class ClientApplication {
     public static void main(String[] args) {
         SpringApplication.run(ClientApplication.class, args);

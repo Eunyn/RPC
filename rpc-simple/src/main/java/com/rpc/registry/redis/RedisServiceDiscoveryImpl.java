@@ -37,7 +37,7 @@ public class RedisServiceDiscoveryImpl implements ServiceDiscovery {
         List<String> lists = new ArrayList<>(address);
         String s = loadBalance.selectServiceAddress(lists, rpcRequest);
 
-        logger.info("the node of the select is [{}}", s);
+        logger.info("the node of the select is [{}]", s);
 
         String[] ipPort = s.split(":");
         String host = ipPort[0].substring(1);

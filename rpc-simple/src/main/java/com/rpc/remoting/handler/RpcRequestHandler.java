@@ -6,6 +6,8 @@ import com.rpc.remoting.dto.RpcRequest;
 import com.rpc.utils.SingletonFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.reflect.FastClass;
+import org.springframework.cglib.reflect.FastMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,9 +50,17 @@ public class RpcRequestHandler {
     private Object invokeTargetMethod(RpcRequest rpcRequest, Object service) {
         Object result = null;
         try {
-            Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+            logger.info("方法名称：{}，方法参数类型：{}，参数值：{}", rpcRequest.getMethodName(), rpcRequest.getParameterTypes(), rpcRequest.getParameters());
+//            Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+//            logger.info("method 名称：{}", method.getName());
+//            result = method.invoke(service, rpcRequest.getParameters());
+
+            FastClass proxyClass = FastClass.create(service.getClass());
+            FastMethod method = proxyClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
             result = method.invoke(service, rpcRequest.getParameters());
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            logger.info("执行类：{}", service.getClass().getCanonicalName());
+            logger.info("执行结果：{}", result);
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
 

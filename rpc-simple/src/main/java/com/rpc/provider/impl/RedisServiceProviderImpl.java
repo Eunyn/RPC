@@ -4,6 +4,7 @@ import com.rpc.config.RpcServiceConfig;
 import com.rpc.extension.ExtensionLoader;
 import com.rpc.provider.ServiceProvider;
 import com.rpc.registry.ServiceRegistry;
+import com.rpc.remoting.transport.netty.server.NettyRpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,14 @@ public class RedisServiceProviderImpl implements ServiceProvider {
 
     @Override
     public Object getService(String rpcServiceName) {
-        Object service = serviceMap.get(rpcServiceName);
+        Object service = null;
+        if (rpcServiceName == null)
+            logger.info("RPC 服务名称为空");
+        else {
+            logger.info("RPC 服务名称：{}", rpcServiceName);
+            service = serviceMap.get(rpcServiceName);
+        }
+
         if (service == null)
             throw new RuntimeException("SERVICE CAN NOT BE FOUND");
         return service;
@@ -59,7 +67,7 @@ public class RedisServiceProviderImpl implements ServiceProvider {
         try {
             String host = InetAddress.getLocalHost().getHostAddress();
             this.addService(rpcServiceConfig);
-            serviceRegistry.registerService(rpcServiceConfig.getServiceName(), new InetSocketAddress(host, 8989));
+            serviceRegistry.registerService(rpcServiceConfig.getServiceName(), new InetSocketAddress(host, NettyRpcServer.PORT));
         } catch (UnknownHostException e) {
             logger.error("occur exception when getHostAddress", e);
             e.printStackTrace();

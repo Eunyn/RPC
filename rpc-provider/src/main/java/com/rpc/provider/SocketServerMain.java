@@ -1,7 +1,9 @@
 package com.rpc.provider;
 
+import com.rpc.api.HelloService;
 import com.rpc.api.IUserService;
 import com.rpc.config.RpcServiceConfig;
+import com.rpc.provider.service.HelloServiceImpl;
 import com.rpc.provider.service.UserServiceImpl;
 import com.rpc.remoting.transport.socket.SocketRpcServer;
 
@@ -14,10 +16,11 @@ import com.rpc.remoting.transport.socket.SocketRpcServer;
  **/
 public class SocketServerMain {
     public static void main(String[] args) {
-        IUserService userService = new UserServiceImpl();
+//        IUserService userService = new UserServiceImpl();
+        HelloService helloService = new HelloServiceImpl();
         SocketRpcServer socketRpcServer = new SocketRpcServer();
         RpcServiceConfig rpcServiceConfig = new RpcServiceConfig();
-        rpcServiceConfig.setService(userService);
+        rpcServiceConfig.setService(helloService);
         socketRpcServer.registerService(rpcServiceConfig);
         socketRpcServer.start();
     }

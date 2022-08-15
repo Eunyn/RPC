@@ -1,5 +1,6 @@
 package com.rpc.consumer;
 
+import com.rpc.api.HelloService;
 import com.rpc.api.IUserService;
 import com.rpc.config.RpcServiceConfig;
 import com.rpc.pojo.User;
@@ -19,11 +20,12 @@ public class SocketClientMain {
         RpcRequestTransport rpcRequestTransport = new SocketRpcClient();
         RpcServiceConfig rpcServiceConfig = new RpcServiceConfig();
         RpcClientProxy rpcClientProxy = new RpcClientProxy(rpcRequestTransport, rpcServiceConfig);
-        IUserService proxy = rpcClientProxy.getProxy(IUserService.class);
-//        for (int i = 0; i < 1000; i++) {
-            User user = proxy.getById(1);
+//        IUserService proxy = rpcClientProxy.getProxy(IUserService.class);
+//        User user = proxy.getById(1);
+//        System.out.println(user.toString());
 
-            System.out.println(user.toString());
-//        }
+        HelloService proxy = rpcClientProxy.getProxy(HelloService.class);
+        String rpc = proxy.sayHello("RPC");
+        System.out.println(rpc);
     }
 }

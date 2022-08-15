@@ -1,5 +1,7 @@
 package com.rpc.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySources;
 import redis.clients.jedis.Jedis;
 
 import java.lang.annotation.Annotation;
@@ -13,7 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: redis 用作服务注册
  * @CreateTime: 2022/8/1 16:03:00
  **/
+
 public class RedisUtil {
+
+    @Value("spring.redis.host")
+    private String HOST;
+
+    private Integer port;
+
     private static final Jedis jedis = new Jedis("192.168.3.147", 6379);
 
     private static final Set<String> interfaceIpLists = new HashSet<>();

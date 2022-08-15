@@ -17,5 +17,5 @@ public interface IUserService {
      * @param id
      * @return
      */
-    User getById(int id);
+    User getById(Integer id);
 }
