@@ -20,7 +20,7 @@
 
 **最基本的 RPC 框架设计思路**
 
-![img_5.png](images/img_5.png)
+![img.png](images/img.png)
 1. 注册中心：<font color=blue>使用 Redis 实现</font>。注册中心负责服务地址的注册与查找。服务端启动的时候将服务名称及其对应的地址 `(ip + port)` 注册到注册中心，服务消费端根据服务名称找到对应的服务地址。有了服务地址之后，服务消费端就可以通过网络请求服务端了。
 2. 网络传输：<font color=blue>使用 Socket 和 Netty 实现</font>。调用远程的方法就要发请求，请求中至少要包含调用的类名、方法名以及相关参数！
 3. 序列化：<font color=blue>使用 Kyro 和 Hessian 实现</font>。JDK 自带的序列化效率低并且有安全漏洞。比较常用的有 `hession2`、`kyro`、`protostuff`。
